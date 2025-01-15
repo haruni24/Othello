@@ -1,9 +1,11 @@
+import cython
+from libc.stdlib cimport malloc, free
 import numpy as np
-from reversi.common import *
+cimport numpy as cnp
+from cpreversi.common import *
 
 class Board:
     def __init__(self):
-        self.cash = (np.zeros((8, 8), dtype=np.int8), self.turn, self.legal_moves)
         self.reset()
 
     def __str__(self):
@@ -25,24 +27,16 @@ class Board:
                     moves.append(move_to_pos(x, y))
         return moves
     
-    def is_legal(self, move):
+    def is_legal(self, cnp.ndarray[int, ndim=1, mode="c"] board, move):
         if isinstance(move, str): move = move_from_pos(move)
+        cdef:
+            int *cboard
+            int x, y
+            int turn
         x, y = move[0], move[1]
-        total = 0
-        if self.board[y][x]!=EMPTY : return False
-        for dx in range(-1,2):
-            for dy in range(-1,2):
-                if total>0: return total
-                sx,sy = x,y
-                k = 0
-                while True:
-                    sx,sy = dx+sx,dy+sy
-                    if sx>7 or sx<0 or sy>7 or sy<0 or self.board[sy][sx]==EMPTY: break
-                    if self.board[sy][sx]==-self.turn: k+=1
-                    if self.board[sy][sx]==self.turn:
-                        total+=k
-                        break
-        return total
+        turn = self.turn
+        cboard = <int*> board.data
+        return is_legal(cboard, x, y, self.turn)
     
     def put_stone(self, x, y):
         self.board[y][x] = self.turn
@@ -71,21 +65,3 @@ class Board:
             self.turn = -self.turn
             self.legal_moves = self.get_legal_moves()
             if(len(self.legal_moves)==0): self.end = True
-
-    def result(self):
-        if self.end==False: return DRAW
-        sum_board = np.sum(self.board)
-        if sum_board>0: return BLACK
-        elif sum_board<0: return WHITE
-        else: return DRAW
-
-    def remember(self):
-        self.cash[0] = self.board.copy()
-        self.cash[1] = self.turn
-        self.cash[2] = self.legal_moves.copy()
-
-    def pop(self):
-        self.board = self.cash[0].copy()
-        self.turn = self.cash[1]
-        self.legal_moves = self.cash[2].copy()
-        self.end = False

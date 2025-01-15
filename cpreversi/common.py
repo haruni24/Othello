@@ -4,7 +4,6 @@ import string
 BLACK = 1
 WHITE = -1
 EMPTY = 0
-DRAW = 0
 
 def move_from_pos(pos):
     col = string.ascii_uppercase.index(pos[0].upper())
