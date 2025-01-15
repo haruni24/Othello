@@ -3,8 +3,8 @@ from reversi.common import *
 
 class Board:
     def __init__(self):
-        self.cash = (np.zeros((8, 8), dtype=np.int8), self.turn, self.legal_moves)
         self.reset()
+        self.cash = [np.zeros((8, 8), dtype=np.int8), self.turn, self.legal_moves]
 
     def __str__(self):
         return str(self.board)
@@ -73,11 +73,11 @@ class Board:
             if(len(self.legal_moves)==0): self.end = True
 
     def result(self):
-        if self.end==False: return DRAW
+        if self.end==False: return 0
         sum_board = np.sum(self.board)
         if sum_board>0: return BLACK
         elif sum_board<0: return WHITE
-        else: return DRAW
+        else: return 0
 
     def remember(self):
         self.cash[0] = self.board.copy()
