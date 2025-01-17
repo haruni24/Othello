@@ -4,7 +4,7 @@ from reversi.common import *
 class Board:
     def __init__(self):
         self.reset()
-        self.cash = [np.zeros((8, 8), dtype=np.int8), self.turn, self.legal_moves]
+        self.cash = [[np.zeros((8, 8), dtype=np.int8), self.turn, self.legal_moves]]
 
     def __str__(self):
         return str(self.board)
@@ -79,13 +79,15 @@ class Board:
         elif sum_board<0: return WHITE
         else: return 0
 
-    def remember(self):
-        self.cash[0] = self.board.copy()
-        self.cash[1] = self.turn
-        self.cash[2] = self.legal_moves.copy()
+    def remember(self, address):
+        if len(self.cash)<address+1:
+            self.cash.append([np.zeros((8, 8), dtype=np.int8), self.turn, self.legal_moves.copy()])
+        self.cash[address][0] = self.board.copy()
+        self.cash[address][1] = self.turn
+        self.cash[address][2] = self.legal_moves.copy()
 
-    def pop(self):
-        self.board = self.cash[0].copy()
-        self.turn = self.cash[1]
-        self.legal_moves = self.cash[2].copy()
+    def pop(self, address):
+        self.board = self.cash[address][0].copy()
+        self.turn = self.cash[address][1]
+        self.legal_moves = self.cash[address][2].copy()
         self.end = False
