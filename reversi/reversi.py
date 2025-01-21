@@ -91,3 +91,6 @@ class Board:
         self.turn = self.cash[address][1]
         self.legal_moves = self.cash[address][2].copy()
         self.end = False
+
+    def cash_clear(self):
+        self.cash = [[np.zeros((8, 8), dtype=np.int8), self.turn, self.legal_moves]]

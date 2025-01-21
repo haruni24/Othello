@@ -20,3 +20,6 @@ def converse_prob(element_list):
     element_sum = sum(element_list)
     prob = [element/element_sum for element in element_list]
     return prob
+
+def extra_value(input_list):
+    return [element[0] for element in input_list]
