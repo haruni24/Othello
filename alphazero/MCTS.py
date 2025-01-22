@@ -46,7 +46,7 @@ class MCTS:
             move = board.legal_moves[move_index]
             board.push(move)
             state = self.board_to_str(board)
-            if self.N[state]>self.EXPAND_THRESHOLD:
+            if self.N[state]>self.EXPAND_THRESHOLD and not board.end:
                 result = self.expand(board, current_turn)
             else:
                 result = self.playout(board)
@@ -68,7 +68,7 @@ class MCTS:
         move = board.legal_moves[move_index]
         board.push(move)
         state = self.board_to_str(board)
-        if self.N[state]>self.EXPAND_THRESHOLD:
+        if self.N[state]>self.EXPAND_THRESHOLD and not board.end:
             result = self.expand(board, current_turn)
         else:
             result = self.playout(board)
