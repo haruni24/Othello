@@ -94,3 +94,30 @@ class Board:
 
     def cash_clear(self):
         self.cash = [[np.zeros((8, 8), dtype=np.int8), self.turn, self.legal_moves]]
+
+    def legal_mask(self):
+        mask = np.zeros((8, 8), dtype=np.int8)
+        for move in self.legal_moves:
+            x, y = move_from_pos(move)
+            mask[y][x] = 1
+        return mask
+
+    def get_state(self):
+        state = np.zeros((3, 8, 8), dtype=np.float32)
+        state[0] = (self.board==self.turn).astype(np.float32)
+        state[1] = (self.board==-self.turn).astype(np.float32)
+        state[2] = self.legal_mask().astype(np.float32)
+        return state
+    
+    def is_end(self):
+        if len(self.legal_moves)==0:
+            self.turn = -self.turn
+            if len(self.get_legal_moves())==0:
+                self.end = True
+                return True
+        return False
+    
+    def from_json(self, json_data):
+        self.board, self.turn = deserialize(json_data)
+        self.legal_moves = self.get_legal_moves()
+        self.end = self.is_end()
