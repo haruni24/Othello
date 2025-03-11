@@ -12,6 +12,11 @@ def move_from_pos(pos):
     row = int(pos[1]) - 1
     return (col, row)
 
+def pos_to_index(pos):
+    col = string.ascii_uppercase.index(pos[0].upper())
+    row = int(pos[1]) - 1
+    return row * 8 + col
+
 def move_to_pos(x, y):
     col = string.ascii_uppercase[x]
     row = y + 1
